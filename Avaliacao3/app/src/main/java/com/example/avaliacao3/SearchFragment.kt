@@ -66,7 +66,6 @@ class SearchFragment : Fragment() {
         view.button_search.setOnClickListener {
             view.progress_bar.visibility = View.VISIBLE
             search(view)
-            view.progress_bar.visibility = View.INVISIBLE
         }
 
         Log.i(TAG, "onCreateView() - fragment loaded")
@@ -91,7 +90,7 @@ class SearchFragment : Fragment() {
             Log.d(TAG, lang)
             Log.d(TAG, city)
 
-            makeRequest(city, units, lang)
+            makeRequest(view, city, units, lang)
         } else {
             Log.e(TAG, "search() - Connection not available")
             val toast = Toast.makeText(context, "No connection, Offline", Toast.LENGTH_LONG)
@@ -100,7 +99,7 @@ class SearchFragment : Fragment() {
 
     }
 
-    private fun makeRequest(city: String, units: String, lang: String) {
+    private fun makeRequest(view: View,city: String, units: String, lang: String) {
         weatherList.clear()
         Log.i(TAG, "makeRequest() - making request...")
 
@@ -111,6 +110,7 @@ class SearchFragment : Fragment() {
         api.requestWeatherData(city, units, lang, KEY).enqueue(object : Callback<WeatherList?> {
             override fun onResponse(call: Call<WeatherList?>, response: Response<WeatherList?>) {
                 val response = response.body()
+                view.progress_bar.visibility = View.INVISIBLE
                 Log.i(TAG, "makeRequest() - request success")
                 if (response != null) {
                     weatherList.addAll(response.list)
@@ -120,6 +120,7 @@ class SearchFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<WeatherList?>, t: Throwable) {
+                view.progress_bar.visibility = View.INVISIBLE
                 Log.e(TAG, "makeRequest() - request failed")
             }
 
